@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MailPulse — SMTP & IMAP Test</title>
+  <meta name="description"
+    content="MailPulse — A lightweight SMTP & IMAP email testing tool. Send and receive test emails with ease." />
+  <!-- Favicon (inline SVG) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'/%3E%3Cpolyline points='22,6 12,13 2,6'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-top">
+        <div class="logo">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+            <polyline points="22,6 12,13 2,6" />
+          </svg>
+          <h1 data-i18n="appName">MailPulse</h1>
+        </div>
+        <div class="header-actions">
+          <!-- Theme Toggle -->
+          <button class="icon-btn" onclick="toggleTheme()" id="theme-toggle" aria-label="Toggle theme">
+            <svg id="theme-icon-dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+            </svg>
+            <svg id="theme-icon-light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hidden">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+          </button>
+          <!-- Language Selector -->
+          <div class="lang-selector">
+            <button class="lang-btn" onclick="toggleLangDropdown()" id="lang-current" aria-label="Select language">
+              🇺🇸 English
+            </button>
+            <div id="lang-dropdown" class="lang-dropdown">
+              <button class="lang-option" onclick="setLanguage('tr')">🇹🇷 Türkçe</button>
+              <button class="lang-option" onclick="setLanguage('en')">🇺🇸 English</button>
+              <button class="lang-option" onclick="setLanguage('es')">🇪🇸 Español</button>
+              <button class="lang-option" onclick="setLanguage('fr')">🇫🇷 Français</button>
+              <button class="lang-option" onclick="setLanguage('de')">🇩🇪 Deutsch</button>
+              <button class="lang-option" onclick="setLanguage('zh')">🇨🇳 中文</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="subtitle" data-i18n="subtitle">SMTP & IMAP Test Application</p>
+    </header>
+
+    <!-- Connection Settings -->
+    <section class="card connection-card">
+      <h2 class="card-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
+          <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
+          <line x1="6" y1="6" x2="6.01" y2="6" />
+          <line x1="6" y1="18" x2="6.01" y2="18" />
+        </svg>
+        <span data-i18n="connectionSettings">Connection Settings</span>
+      </h2>
+
+      <!-- Preset Buttons -->
+      <div class="preset-bar">
+        <button class="preset-btn active" onclick="applyPreset('gmail')">
+          <span class="preset-dot gmail"></span> Gmail
+        </button>
+        <button class="preset-btn" onclick="applyPreset('outlook')">
+          <span class="preset-dot outlook"></span> Outlook
+        </button>
+        <button class="preset-btn" onclick="applyPreset('yandex')">
+          <span class="preset-dot yandex"></span> Yandex
+        </button>
+        <button class="preset-btn" onclick="applyPreset('custom')">
+          <span class="preset-dot custom"></span> <span data-i18n="custom">Custom</span>
+        </button>
+      </div>
+
+      <div class="connection-grid">
+        <!-- SMTP -->
+        <div class="conn-group">
+          <h3 class="conn-label" data-i18n="smtpSending">SMTP (Sending)</h3>
+          <div class="input-row">
+            <div class="field">
+              <label for="smtp_host" data-i18n="server">Server</label>
+              <input type="text" id="smtp_host" value="smtp.gmail.com" />
+            </div>
+            <div class="field field-small">
+              <label for="smtp_port">Port</label>
+              <input type="number" id="smtp_port" value="587" />
+            </div>
+            <div class="field field-tiny">
+              <label for="smtp_secure">SSL</label>
+              <label class="toggle">
+                <input type="checkbox" id="smtp_secure" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- IMAP -->
+        <div class="conn-group">
+          <h3 class="conn-label" data-i18n="imapReceiving">IMAP (Receiving)</h3>
+          <div class="input-row">
+            <div class="field">
+              <label for="imap_host" data-i18n="server">Server</label>
+              <input type="text" id="imap_host" value="imap.gmail.com" />
+            </div>
+            <div class="field field-small">
+              <label for="imap_port">Port</label>
+              <input type="number" id="imap_port" value="993" />
+            </div>
+            <div class="field field-tiny">
+              <label for="imap_tls">TLS</label>
+              <label class="toggle">
+                <input type="checkbox" id="imap_tls" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Credentials -->
+      <div class="credentials">
+        <div class="field">
+          <label for="email_user" data-i18n="emailAddress">Email Address</label>
+          <input type="email" id="email_user" data-i18n-placeholder="emailPlaceholder"
+            placeholder="example@gmail.com" />
+        </div>
+        <div class="field">
+          <label for="email_pass" data-i18n="appPassword">App Password</label>
+          <input type="password" id="email_pass" placeholder="••••••••••••••••" />
+          <small class="hint" data-i18n-hint="appPasswordHint">Gmail: Create an <a
+              href="https://myaccount.google.com/apppasswords" target="_blank">App Password</a></small>
+        </div>
+      </div>
+
+      <!-- Action Buttons Row -->
+      <div class="conn-actions">
+        <button id="btn-test" class="btn btn-outline" onclick="testConnection()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          <span data-i18n="testConnection">Test Connection</span>
+        </button>
+        <button class="btn btn-outline" onclick="saveConnection()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+            <polyline points="17 21 17 13 7 13 7 21" />
+            <polyline points="7 3 7 8 15 8" />
+          </svg>
+          <span data-i18n="saveConnection">Save Connection</span>
+        </button>
+        <button class="btn btn-outline btn-danger-outline" onclick="clearSavedConnection()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+          </svg>
+          <span data-i18n="clearSaved">Clear Saved</span>
+        </button>
+      </div>
+      <div id="test-result" class="result hidden"></div>
+    </section>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="send" onclick="switchTab('send')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13" />
+          <polygon points="22 2 15 22 11 13 2 9 22 2" />
+        </svg>
+        <span data-i18n="tabSend">Send Mail</span>
+      </button>
+      <button class="tab" data-tab="inbox" onclick="switchTab('inbox')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+          <path
+            d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z" />
+        </svg>
+        <span data-i18n="tabInbox">Inbox</span>
+      </button>
+    </div>
+
+    <!-- Send Panel -->
+    <section id="panel-send" class="card panel">
+      <div class="field">
+        <label for="mail_to" data-i18n="recipient">Recipient</label>
+        <input type="email" id="mail_to" value="info@example.com" />
+      </div>
+      <div class="field">
+        <label for="mail_subject" data-i18n="subject">Subject</label>
+        <input type="text" id="mail_subject" data-i18n-value="defaultSubject" value="Test Email 🧪" />
+      </div>
+      <div class="field">
+        <label for="mail_body" data-i18n="content">Content</label>
+        <textarea id="mail_body" rows="5" data-i18n-value="defaultBody">Hello! 👋
+
+This is a test email sent via MailPulse.
+
+Have a great day! 🎉</textarea>
+      </div>
+      <button id="btn-send" class="btn btn-primary" onclick="sendMail()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13" />
+          <polygon points="22 2 15 22 11 13 2 9 22 2" />
+        </svg>
+        <span data-i18n="send">Send</span>
+      </button>
+      <div id="send-result" class="result hidden"></div>
+    </section>
+
+    <!-- Inbox Panel -->
+    <section id="panel-inbox" class="card panel hidden">
+      <button id="btn-fetch" class="btn btn-secondary" onclick="fetchInbox()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 4 23 10 17 10" />
+          <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10" />
+        </svg>
+        <span data-i18n="loadInbox">Load Inbox</span>
+      </button>
+      <div id="inbox-result" class="result hidden"></div>
+      <div id="email-list"></div>
+    </section>
+
+    <!-- Toast -->
+    <div id="toast" class="toast hidden"></div>
+  </div>
+
+  <script src="i18n.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
